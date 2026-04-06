@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": ">=20.9.0"
+    "node": "20.x"
   },
   "scripts": {
     "dev": "next dev --turbopack",
@@ -42,13 +42,13 @@
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
-    "@types/node": "^22.0.0",
+    "@types/node": "20.17.19",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "css-loader": "^7.1.2",
     "dotenv-webpack": "^8.1.1",
     "eslint": "^9",
-    "eslint-config-next": "15.3.5",
+    "eslint-config-next": "15.4.10",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-prettier": "^5.5.0",
@@ -63,5 +63,5 @@
     "webpack": "^5.100.1",
     "webpack-cli": "^6.0.1"
   },
-  "packageManager": "pnpm@9.15.9"
+  "packageManager": "pnpm@9.15.4"
 }
