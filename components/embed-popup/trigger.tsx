@@ -19,7 +19,7 @@ export function Trigger({
   error = null, 
   popupOpen, 
   onToggle, 
-  title = "Talk to AI Receptionist", 
+  title = "TALK TO AI RECEPTIONIST", 
   color = "#7C3AED" // Your Purple Color
 }: TriggerProps) {
   const { state: agentState } = useVoiceAssistant();
@@ -47,26 +47,12 @@ export function Trigger({
           onClick={onToggle}
           style={{ backgroundColor: buttonColor }}
           className={cn(
-            "flex items-center gap-3 px-6 py-3 rounded-full shadow-2xl transition-all hover:scale-105 active:scale-95",
+            "flex items-center justify-center gap-2 px-6 py-3 rounded-full shadow-2xl transition-all hover:scale-105 active:scale-95",
             "h-auto w-auto min-w-[200px] border-none text-white font-bold tracking-wide"
           )}
         >
-          {/* Logo Section (Only shown when closed) */}
-          {!popupOpen && (
-            <div
-              className="size-6 bg-white"
-              style={{
-                // FIXED: Using absolute Vercel path to stop the 404 error
-                maskImage: 'url(https://ai-receptionist-vert-pi.vercel.app/lk-logo.svg)',
-                maskSize: 'contain',
-                maskRepeat: 'no-repeat',
-                maskPosition: 'center'
-              }}
-            />
-          )}
-
-          {/* Text Section + Speech Bubble Emoji */}
-          <span className="text-base whitespace-nowrap flex items-center gap-1.5">
+          {/* Text Section + Speech Bubble Emoji ONLY */}
+          <span className="text-base whitespace-nowrap flex items-center gap-2">
             {popupOpen ? (
               <>
                 {error ? <XIcon size={20} /> : <PhoneDisconnectIcon size={20} />}
@@ -74,7 +60,7 @@ export function Trigger({
               </>
             ) : (
               <>
-                {/* Speech Bubble Emoji Added Here */}
+                {/* Speech Bubble Emoji */}
                 <span className="text-xl">🗨️</span>
                 <span>{title}</span>
               </>
@@ -93,4 +79,4 @@ export function Trigger({
       </AnimatePresence>
     </div>
   );
-          }
+}
