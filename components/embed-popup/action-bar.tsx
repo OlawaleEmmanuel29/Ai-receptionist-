@@ -22,9 +22,6 @@ export interface AgentControlBarProps
   onDeviceError?: (error: { source: Track.Source; error: Error }) => void;
 }
 
-/**
- * A control bar specifically designed for voice assistant interfaces
- */
 export function ActionBar({
   controls,
   saveUserChoices = true,
@@ -45,11 +42,9 @@ export function ActionBar({
   const {
     micTrackRef,
     visibleControls,
-    cameraToggle,
     microphoneToggle,
     screenShareToggle,
     handleAudioDeviceChange,
-    handleVideoDeviceChange,
   } = useAgentControlBar({
     controls,
     saveUserChoices,
@@ -71,12 +66,6 @@ export function ActionBar({
   const onMicrophoneDeviceSelectError = useCallback(
     (error: Error) => {
       onDeviceError?.({ source: Track.Source.Microphone, error });
-    },
-    [onDeviceError]
-  );
-  const onCameraDeviceSelectError = useCallback(
-    (error: Error) => {
-      onDeviceError?.({ source: Track.Source.Camera, error });
     },
     [onDeviceError]
   );
@@ -149,34 +138,6 @@ export function ActionBar({
                   'hover:text-fg1 focus:text-fg1',
                   'hover:peer-data-[state=off]/track:text-destructive-foreground focus:peer-data-[state=off]/track:text-destructive-foreground',
                   'hidden rounded-l-none md:block',
-                ])}
-              />
-            </div>
-          )}
-
-          {capabilities.supportsVideoInput && visibleControls.camera && (
-            <div className="flex items-center gap-0">
-              <TrackToggle
-                variant="primary"
-                source={Track.Source.Camera}
-                pressed={cameraToggle.enabled}
-                pending={cameraToggle.pending}
-                disabled={cameraToggle.pending}
-                onPressedChange={cameraToggle.toggle}
-                className="peer/track relative w-auto pr-3 pl-3 disabled:opacity-100 has-[+_*]:rounded-r-none has-[+_*]:border-r-0 has-[+_*]:pr-2"
-              />
-              <DeviceSelect
-                size="sm"
-                kind="videoinput"
-                requestPermissions={false}
-                onMediaDeviceError={onCameraDeviceSelectError}
-                onActiveDeviceChange={handleVideoDeviceChange}
-                className={cn([
-                  'pl-2',
-                  'peer-data-[state=off]/track:text-destructive-foreground',
-                  'hover:text-fg1 focus:text-fg1',
-                  'hover:peer-data-[state=off]/track:text-destructive-foreground focus:peer-data-[state=off]/track:text-destructive-foreground',
-                  'rounded-l-none',
                 ])}
               />
             </div>
