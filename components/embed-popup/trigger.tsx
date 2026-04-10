@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useVoiceAssistant } from '@livekit/components-react';
-import { PhoneDisconnectIcon, XIcon, ChatTeardropText } from '@phosphor-icons/react';
+import { PhoneDisconnectIcon, XIcon } from '@phosphor-icons/react';
 import { EmbedErrorDetails } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Button } from '../ui/button';
@@ -33,6 +33,9 @@ export function Trigger({
     agentState !== 'connecting' &&
     agentState !== 'initializing';
 
+  // Define dynamic color (Purple by default, Red if connected or error)
+  const buttonColor = (isAgentConnected || (error && popupOpen)) ? '#EF4444' : color;
+
   return (
     <div className="fixed right-4 bottom-4 z-50">
       <AnimatePresence mode="wait">
@@ -42,32 +45,40 @@ export function Trigger({
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 20, scale: 0.9 }}
           onClick={onToggle}
-          style={{ backgroundColor: (isAgentConnected || (error && popupOpen)) ? '#EF4444' : color }}
+          style={{ backgroundColor: buttonColor }}
           className={cn(
             "flex items-center gap-3 px-6 py-3 rounded-full shadow-2xl transition-all hover:scale-105 active:scale-95",
             "h-auto w-auto min-w-[200px] border-none text-white font-bold tracking-wide"
           )}
         >
-          {/* Icon Section */}
-          <div className="relative size-6 flex items-center justify-center">
-             {popupOpen ? (
-               <XIcon size={24} weight="bold" />
-             ) : (
-               <div
-                 className="size-6 bg-white"
-                 style={{
-                   maskImage: 'url(https://ai-receptionist-vert-pi.vercel.app/lk-logo.svg)',
-                   maskSize: 'contain',
-                   maskRepeat: 'no-repeat',
-                   maskPosition: 'center'
-                 }}
-               />
-             )}
-          </div>
+          {/* Logo Section (Only shown when closed) */}
+          {!popupOpen && (
+            <div
+              className="size-6 bg-white"
+              style={{
+                // FIXED: Using absolute Vercel path to stop the 404 error
+                maskImage: 'url(https://ai-receptionist-vert-pi.vercel.app/lk-logo.svg)',
+                maskSize: 'contain',
+                maskRepeat: 'no-repeat',
+                maskPosition: 'center'
+              }}
+            />
+          )}
 
-          {/* Text Section */}
-          <span className="text-base whitespace-nowrap">
-            {popupOpen ? (error ? "Close Error" : "End Call") : title}
+          {/* Text Section + Speech Bubble Emoji */}
+          <span className="text-base whitespace-nowrap flex items-center gap-1.5">
+            {popupOpen ? (
+              <>
+                {error ? <XIcon size={20} /> : <PhoneDisconnectIcon size={20} />}
+                <span>{error ? "Close Error" : "End Call"}</span>
+              </>
+            ) : (
+              <>
+                {/* Speech Bubble Emoji Added Here */}
+                <span className="text-xl">🗨️</span>
+                <span>{title}</span>
+              </>
+            )}
           </span>
 
           {/* Connection Spinner */}
@@ -82,4 +93,4 @@ export function Trigger({
       </AnimatePresence>
     </div>
   );
-}
+          }
