@@ -129,7 +129,7 @@ export function ActionBar({
                 size="sm"
                 kind="audioinput"
                 requestPermissions={false}
-                onMicrophoneDeviceSelectError={onMicrophoneDeviceSelectError}
+                onMediaDeviceError={onMicrophoneDeviceSelectError}
                 onActiveDeviceChange={handleAudioDeviceChange}
                 className={cn([
                   'pl-2',
@@ -143,8 +143,6 @@ export function ActionBar({
           )}
         </div>
         <div className="flex gap-1">
-          {/* SCREEN SHARE REMOVED FROM HERE */}
-          
           {visibleControls.chat && (
             <Toggle
               variant="secondary"
@@ -161,5 +159,4 @@ export function ActionBar({
       </div>
     </div>
   );
-                      }
-            
+}
