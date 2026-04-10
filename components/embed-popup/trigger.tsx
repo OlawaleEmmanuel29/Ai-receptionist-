@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useVoiceAssistant } from '@livekit/components-react';
-import { PhoneDisconnectIcon, XIcon } from '@phosphor-icons/react';
+import { PhoneDisconnectIcon, XIcon, ChatTeardropText } from '@phosphor-icons/react';
 import { EmbedErrorDetails } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Button } from '../ui/button';
@@ -19,8 +19,8 @@ export function Trigger({
   error = null, 
   popupOpen, 
   onToggle, 
-  title = "Talk to AI Receptionist", // Updated writing
-  color = "#7C3AED"                   // Professional Purple hex
+  title = "Talk to AI Receptionist", 
+  color = "#7C3AED" // Your Purple Color
 }: TriggerProps) {
   const { state: agentState } = useVoiceAssistant();
 
@@ -34,77 +34,52 @@ export function Trigger({
     agentState !== 'initializing';
 
   return (
-    <div className="fixed right-4 bottom-4 z-50 flex items-center gap-3">
-      {/* Floating text bubble next to the button */}
-      {!popupOpen && (
-        <motion.span 
-          initial={{ opacity: 0, x: 10 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="bg-white px-4 py-2 rounded-xl shadow-lg text-sm font-semibold text-gray-800 border border-gray-100"
-        >
-          {title}
-        </motion.span>
-      )}
-
-      <AnimatePresence>
+    <div className="fixed right-4 bottom-4 z-50">
+      <AnimatePresence mode="wait">
         <AnimatedButton
-          key="trigger-button"
-          size="lg"
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          exit={{ scale: 0 }}
-          transition={{ type: 'spring', duration: 1, bounce: 0.2 }}
+          key={popupOpen ? 'open' : 'closed'}
+          initial={{ opacity: 0, y: 20, scale: 0.9 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 20, scale: 0.9 }}
           onClick={onToggle}
-          style={{ backgroundColor: !popupOpen ? color : undefined }}
+          style={{ backgroundColor: (isAgentConnected || (error && popupOpen)) ? '#EF4444' : color }}
           className={cn(
-            'relative m-0 block size-14 p-0.5 drop-shadow-xl', // Increased size slightly for visibility
-            'scale-100 transition-[scale] duration-300 hover:scale-110 focus:scale-105',
-            (isAgentConnected || (error && popupOpen)) && 'bg-destructive'
+            "flex items-center gap-3 px-6 py-3 rounded-full shadow-2xl transition-all hover:scale-105 active:scale-95",
+            "h-auto w-auto min-w-[200px] border-none text-white font-bold tracking-wide"
           )}
         >
-          {/* Ring animation with your purple color */}
-          <motion.div
-            className={cn(
-              'absolute inset-0 z-10 rounded-full transition-colors',
-              !error && isAgentConnecting && 'animate-spin opacity-40'
-            )}
-            style={{ 
-              backgroundColor: !popupOpen ? color : undefined,
-              backgroundImage: isAgentConnecting ? `conic-gradient(from 0deg, transparent 0%, transparent 30%, ${color} 50%, transparent 70%, transparent 100%)` : undefined
-            }}
-          />
-          
-          <div className="relative z-20 grid size-full place-items-center rounded-full">
-            <AnimatePresence mode="wait">
-              {!popupOpen && (
-                <motion.div
-                  key="lk-logo"
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 20 }}
-                  className="absolute"
-                >
-                  <div
-                    className="size-6 bg-white"
-                    style={{
-                      // Pointing to your Vercel URL to fix the 404 error on WordPress
-                      maskImage: 'url(https://ai-receptionist-vert-pi.vercel.app/lk-logo.svg)',
-                      maskSize: 'contain',
-                      maskRepeat: 'no-repeat'
-                    }}
-                  />
-                </motion.div>
-              )}
-              {(isAgentConnecting || (error && popupOpen)) && (
-                <XIcon size={24} weight="bold" className="text-white" />
-              )}
-              {!error && isAgentConnected && (
-                <PhoneDisconnectIcon size={24} weight="bold" className="text-white" />
-              )}
-            </AnimatePresence>
+          {/* Icon Section */}
+          <div className="relative size-6 flex items-center justify-center">
+             {popupOpen ? (
+               <XIcon size={24} weight="bold" />
+             ) : (
+               <div
+                 className="size-6 bg-white"
+                 style={{
+                   maskImage: 'url(https://ai-receptionist-vert-pi.vercel.app/lk-logo.svg)',
+                   maskSize: 'contain',
+                   maskRepeat: 'no-repeat',
+                   maskPosition: 'center'
+                 }}
+               />
+             )}
           </div>
+
+          {/* Text Section */}
+          <span className="text-base whitespace-nowrap">
+            {popupOpen ? (error ? "Close Error" : "End Call") : title}
+          </span>
+
+          {/* Connection Spinner */}
+          {isAgentConnecting && (
+            <motion.div 
+              animate={{ rotate: 360 }}
+              transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+              className="absolute -top-1 -right-1 size-4 bg-white rounded-full border-2 border-purple-500"
+            />
+          )}
         </AnimatedButton>
       </AnimatePresence>
     </div>
   );
-      }
+}
