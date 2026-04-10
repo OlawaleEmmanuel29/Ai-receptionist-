@@ -43,7 +43,6 @@ export function ActionBar({
     micTrackRef,
     visibleControls,
     microphoneToggle,
-    screenShareToggle,
     handleAudioDeviceChange,
   } = useAgentControlBar({
     controls,
@@ -130,7 +129,7 @@ export function ActionBar({
                 size="sm"
                 kind="audioinput"
                 requestPermissions={false}
-                onMediaDeviceError={onMicrophoneDeviceSelectError}
+                onMicrophoneDeviceSelectError={onMicrophoneDeviceSelectError}
                 onActiveDeviceChange={handleAudioDeviceChange}
                 className={cn([
                   'pl-2',
@@ -144,19 +143,8 @@ export function ActionBar({
           )}
         </div>
         <div className="flex gap-1">
-          {capabilities.supportsScreenShare && visibleControls.screenShare && (
-            <div className="flex items-center gap-0">
-              <TrackToggle
-                variant="secondary"
-                source={Track.Source.ScreenShare}
-                pressed={screenShareToggle.enabled}
-                disabled={screenShareToggle.pending}
-                onPressedChange={screenShareToggle.toggle}
-                className="relative w-auto"
-              />
-            </div>
-          )}
-
+          {/* SCREEN SHARE REMOVED FROM HERE */}
+          
           {visibleControls.chat && (
             <Toggle
               variant="secondary"
@@ -173,4 +161,5 @@ export function ActionBar({
       </div>
     </div>
   );
-}
+                      }
+            
