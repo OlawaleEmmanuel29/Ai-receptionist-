@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Room, RoomEvent } from 'livekit-client';
+import { Room, RoomEvent, DataPacket_Kind } from 'livekit-client'; // Added DataPacket_Kind
 import { motion } from 'motion/react';
 import { RoomAudioRenderer, RoomContext, StartAudio } from '@livekit/components-react';
 import { ErrorMessage } from '@/components/embed-popup/error-message';
@@ -24,12 +24,49 @@ function AgentClient({ appConfig }: EmbedFixedAgentClientProps) {
   const { connectionDetails, refreshConnectionDetails, existingOrRefreshConnectionDetails } =
     useConnectionDetails(appConfig);
 
+  // --- START OF NEW NAVIGATION LOGIC ---
+  useEffect(() => {
+    const handleDataReceived = (payload: Uint8Array, participant: any, kind: any, topic?: string) => {
+      // 1. Check if the message is for our navigation topic
+      if (topic === 'navigation') {
+        try {
+          const decoder = new TextDecoder();
+          const strData = decoder.decode(payload);
+          const data = JSON.parse(strData);
+
+          if (data.action === 'navigate' && data.url) {
+            console.log("AI requested navigation to:", data.url);
+            
+            // 2. Since this is an 'embedded' assistant, it usually lives in an iframe.
+            // Using window.parent ensures the MAIN website changes pages.
+            if (typeof window !== 'undefined') {
+              if (window.parent && window.parent !== window) {
+                window.parent.location.href = data.url;
+              } else {
+                window.location.href = data.url;
+              }
+            }
+          }
+        } catch (e) {
+          console.error("Failed to parse navigation data:", e);
+        }
+      }
+    };
+
+    // 3. Attach the listener to the room
+    room.on(RoomEvent.DataReceived, handleDataReceived);
+
+    // 4. Cleanup on unmount
+    return () => {
+      room.off(RoomEvent.DataReceived, handleDataReceived);
+    };
+  }, [room]);
+  // --- END OF NEW NAVIGATION LOGIC ---
+
   const handleTogglePopup = () => {
     if (isAnimating.current) {
-      // prevent re-opening before room has disconnected
       return;
     }
-
     setError(null);
     setPopupOpen((open) => !open);
   };
@@ -65,9 +102,7 @@ function AgentClient({ appConfig }: EmbedFixedAgentClientProps) {
   }, [room, refreshConnectionDetails]);
 
   useEffect(() => {
-    if (!popupOpen) {
-      return;
-    }
+    if (!popupOpen) return;
     if (!connectionDetails) {
       setError({
         title: 'Error fetching connection details',
@@ -75,9 +110,7 @@ function AgentClient({ appConfig }: EmbedFixedAgentClientProps) {
       });
       return;
     }
-    if (room.state !== 'disconnected') {
-      return;
-    }
+    if (room.state !== 'disconnected') return;
 
     const connect = async () => {
       Promise.all([
@@ -116,10 +149,7 @@ function AgentClient({ appConfig }: EmbedFixedAgentClientProps) {
 
       <motion.div
         inert={!popupOpen}
-        initial={{
-          opacity: 0,
-          translateY: 8,
-        }}
+        initial={{ opacity: 0, translateY: 8 }}
         animate={{
           opacity: popupOpen ? 1 : 0,
           translateY: popupOpen ? 0 : 8,
@@ -141,10 +171,7 @@ function AgentClient({ appConfig }: EmbedFixedAgentClientProps) {
                 appConfig={appConfig}
                 initial={{ opacity: 1 }}
                 animate={{ opacity: error === null ? 1 : 0 }}
-                transition={{
-                  type: 'linear',
-                  duration: 0.2,
-                }}
+                transition={{ type: 'linear', duration: 0.2 }}
                 disabled={!popupOpen}
                 sessionStarted={popupOpen}
                 onEmbedError={setError}
