@@ -20,7 +20,7 @@ export function Trigger({
   popupOpen, 
   onToggle, 
   title = "TALK TO AI RECEPTIONIST", 
-  color = "#7C3AED" // Your Purple Color
+  color = "#F3D371" // Your New Gold Hex Code
 }: TriggerProps) {
   const { state: agentState } = useVoiceAssistant();
 
@@ -33,8 +33,11 @@ export function Trigger({
     agentState !== 'connecting' &&
     agentState !== 'initializing';
 
-  // Define dynamic color (Purple by default, Red if connected or error)
+  // Define dynamic color (Gold by default, Red if connected or error)
   const buttonColor = (isAgentConnected || (error && popupOpen)) ? '#EF4444' : color;
+  
+  // Dynamic text color (Dark for gold background, White for red/error background)
+  const textColor = (isAgentConnected || (error && popupOpen)) ? 'text-white' : 'text-[#1a1a1a]';
 
   return (
     <div className="fixed right-4 bottom-4 z-50">
@@ -48,10 +51,11 @@ export function Trigger({
           style={{ backgroundColor: buttonColor }}
           className={cn(
             "flex items-center justify-center gap-2 px-6 py-3 rounded-full shadow-2xl transition-all hover:scale-105 active:scale-95",
-            "h-auto w-auto min-w-[200px] border-none text-white font-bold tracking-wide"
+            "h-auto w-auto min-w-[200px] border-none font-bold tracking-wide",
+            textColor
           )}
         >
-          {/* Text Section + Speech Bubble Emoji ONLY */}
+          {/* Text Section + Speech Bubble Emoji */}
           <span className="text-base whitespace-nowrap flex items-center gap-2">
             {popupOpen ? (
               <>
@@ -60,7 +64,6 @@ export function Trigger({
               </>
             ) : (
               <>
-                {/* Speech Bubble Emoji */}
                 <span className="text-xl">🗨️</span>
                 <span>{title}</span>
               </>
@@ -72,7 +75,7 @@ export function Trigger({
             <motion.div 
               animate={{ rotate: 360 }}
               transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-              className="absolute -top-1 -right-1 size-4 bg-white rounded-full border-2 border-purple-500"
+              className="absolute -top-1 -right-1 size-4 bg-white rounded-full border-2 border-[#F3D371]"
             />
           )}
         </AnimatedButton>
