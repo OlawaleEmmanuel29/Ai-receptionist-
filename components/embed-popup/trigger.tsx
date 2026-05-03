@@ -20,7 +20,7 @@ export function Trigger({
   popupOpen, 
   onToggle, 
   title = "TALK TO AI RECEPTIONIST", 
-  color = "#F3D371" // Your New Gold Hex Code
+  color = "#F3D371" // This matches the "Book Your Stay" gold color
 }: TriggerProps) {
   const { state: agentState } = useVoiceAssistant();
 
@@ -33,10 +33,10 @@ export function Trigger({
     agentState !== 'connecting' &&
     agentState !== 'initializing';
 
-  // Define dynamic color (Gold by default, Red if connected or error)
+  // Dynamic button color: Gold for standby, Red for active/error
   const buttonColor = (isAgentConnected || (error && popupOpen)) ? '#EF4444' : color;
   
-  // Dynamic text color (Dark for gold background, White for red/error background)
+  // Dynamic text color: Dark Charcoal for gold background, White for red/error
   const textColor = (isAgentConnected || (error && popupOpen)) ? 'text-white' : 'text-[#1a1a1a]';
 
   return (
@@ -50,13 +50,12 @@ export function Trigger({
           onClick={onToggle}
           style={{ backgroundColor: buttonColor }}
           className={cn(
-            "flex items-center justify-center gap-2 px-6 py-3 rounded-full shadow-2xl transition-all hover:scale-105 active:scale-95",
-            "h-auto w-auto min-w-[200px] border-none font-bold tracking-wide",
+            "flex items-center justify-center gap-2 px-7 py-3 rounded-full shadow-2xl transition-all hover:scale-105 active:scale-95",
+            "h-auto w-auto min-w-[220px] border-none font-extrabold tracking-wider",
             textColor
           )}
         >
-          {/* Text Section + Speech Bubble Emoji */}
-          <span className="text-base whitespace-nowrap flex items-center gap-2">
+          <span className="text-sm md:text-base whitespace-nowrap flex items-center gap-2 uppercase">
             {popupOpen ? (
               <>
                 {error ? <XIcon size={20} /> : <PhoneDisconnectIcon size={20} />}
@@ -70,7 +69,7 @@ export function Trigger({
             )}
           </span>
 
-          {/* Connection Spinner */}
+          {/* Status Indicator */}
           {isAgentConnecting && (
             <motion.div 
               animate={{ rotate: 360 }}
